@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List App</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f3f3f3; text-align:center; }
+    .app { max-width:400px; margin:50px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,.1); }
+    input { width:70%; padding:8px; border:1px solid #ccc; border-radius:6px; }
+    button { padding:8px 12px; border:none; border-radius:6px; background:#4CAF50; color:#fff; cursor:pointer; }
+    button:hover { background:#45a049; }
+    ul { list-style:none; padding:0; margin-top:20px; }
+    li { padding:10px; background:#f9f9f9; margin:6px 0; border-radius:6px; display:flex; justify-content:space-between; align-items:center; }
+    li.done { text-decoration: line-through; color: gray; }
+    .del { background:#e63946; padding:5px 8px; border:none; border-radius:6px; color:white; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h2>📝 To-Do List</h2>
+    <input id="task" placeholder="Enter task">
+    <button onclick="addTask()">Add</button>
+    <ul id="list"></ul>
+  </div>
+
+  <script>
+    const list = document.getElementById("list");
+    const taskInput = document.getElementById("task");
+
+    
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    render();
+
+    function addTask() {
+      const task = taskInput.value.trim();
+      if (!task) return;
+      tasks.push({ text: task, done: false });
+      save();
+      taskInput.value = "";
+      render();
+    }
+
+    function toggleTask(index) {
+      tasks[index].done = !tasks[index].done;
+      save();
+      render();
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      save();
+      render();
+    }
+
+    function save() {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function render() {
+      list.innerHTML = tasks.map((t, i) => `
+        <li class="${t.done ? 'done' : ''}">
+          <span onclick="toggleTask(${i})">${t.text}</span>
+          <button class="del" onclick="deleteTask(${i})">❌</button>
+        </li>`).join("");
+    }
+  </script>
+</body>
+</html>
